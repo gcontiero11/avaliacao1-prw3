@@ -10,10 +10,10 @@ import java.util.Optional;
 public class FakeRepository implements StudentsRepository {
     private Map<AlunoDTO, Long> alunos = new HashMap<>();
 
-    FakeRepository() {
+    public FakeRepository() {
     }
 
-    FakeRepository(Map<AlunoDTO, Long> alunos) {
+    public FakeRepository(Map<AlunoDTO, Long> alunos) {
         this.alunos = alunos;
     }
 
