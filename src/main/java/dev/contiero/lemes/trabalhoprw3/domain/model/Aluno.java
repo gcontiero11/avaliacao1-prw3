@@ -11,6 +11,7 @@ public class Aluno {
     private BigDecimal nota2;
     private BigDecimal nota3;
 
+    // TODO: ID autoincrement
     public Aluno(long id, String nome, String ra, String email, long id1, String nome1, String ra1, String email1) {
         this.id = id1;
         this.nome = nome1;
