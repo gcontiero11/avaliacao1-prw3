@@ -41,34 +41,42 @@ public class Menu {
                     BigDecimal nota2 = scanner.nextBigDecimal();
                     System.out.println("Digite a nota3: ");
                     BigDecimal nota3 = scanner.nextBigDecimal();
-                    Aluno aluno = new Aluno();
-                    repository.cadastrar(aluno);
+                    Aluno aluno = new Aluno(0, nome, RA, email, nota1, nota2, nota3);
                     break;
                 case 2:
                     System.out.println("EXCLUIR ALUNO:");
                     System.out.println("Digite o nome do aluno: ");
                     String nomeExcluir = scanner.nextLine();
-                    repo.excluir(nomeExcluir);
                     break;
                 case 3:
-                    System.out.println("ID do aluno a alterar: ");
-                    Long idAlterar = scanner.nextLong();
-                    scanner.nextLine(); // Limpar buffer
-                    Aluno alunoAlterar = repo.buscarPorNome(scanner.nextLine());
-                    if (alunoAlterar != null) {
-                        System.out.println("Novo nome do aluno: ");
-                        alunoAlterar.setNome(scanner.nextLine());
-                        System.out.println("Aprovado? (true/false): ");
-                        alunoAlterar.setAprovado(scanner.nextBoolean());
-                        repo.alterar(alunoAlterar);
-                    } else {
-                        System.out.println("Aluno não encontrado.");
-                    }
+                    System.out.println("ALTERAR ALUNO:");
+                    System.out.println("Digite o nome: ");
+                    String nomeBuscar = scanner.nextLine();
+                    //TODO: check name
+
+                    System.out.println("-------------------------");
+                    System.out.println("Dados aluno:");
+                    //TODO: imprimir dados aluno
+
+                    System.out.println("Novos dados:");
+                    System.out.println("Digite o nome: ");
+                    String nomeAlterar = scanner.nextLine();
+                    System.out.println("Digite o RA: ");
+                    String RAAlterar = scanner.nextLine();
+                    System.out.println("Digite o email: ");
+                    String emailAlterar = scanner.nextLine();
+                    System.out.println("Digite a nota1: ");
+                    BigDecimal nota1Alterar = scanner.nextBigDecimal();
+                    System.out.println("Digite a nota2: ");
+                    BigDecimal nota2Alterar = scanner.nextBigDecimal();
+                    System.out.println("Digite a nota3: ");
+                    BigDecimal nota3Alterar = scanner.nextBigDecimal();
                     break;
                 case 4:
-                    System.out.println("Nome do aluno: ");
-                    String nomeBuscar = scanner.nextLine();
-                    Aluno alunoEncontrado = repo.buscarPorNome(nomeBuscar);
+                    System.out.println("CONSULTAR ALUNO:");
+                    System.out.println("Digite o nome: ");
+                    String nomeParaBuscar = scanner.nextLine();
+                    Aluno alunoEncontrado = repository.buscarPorNome(nomeParaBuscar);
                     if (alunoEncontrado != null) {
                         System.out.println("Aluno encontrado: " + alunoEncontrado.getNome());
                     } else {
@@ -76,7 +84,7 @@ public class Menu {
                     }
                     break;
                 case 5:
-                    List<Aluno> alunos = repo.listar();
+                    List<Aluno> alunos = repository.listar();
                     for (Aluno a : alunos) {
                         System.out.println("Nome: " + a.getNome() + ", Aprovado: " + a.isAprovado());
                     }
