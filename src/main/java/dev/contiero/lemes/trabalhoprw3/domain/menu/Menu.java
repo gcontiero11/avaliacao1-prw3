@@ -41,7 +41,7 @@ public class Menu {
                     BigDecimal nota2 = scanner.nextBigDecimal();
                     System.out.println("Digite a nota3: ");
                     BigDecimal nota3 = scanner.nextBigDecimal();
-                    Aluno aluno = new Aluno(0, nome, RA, email, nota1, nota2, nota3);
+                    Aluno aluno = new Aluno(nome, RA, email, nota1, nota2, nota3);
                     break;
                 case 2:
                     System.out.println("EXCLUIR ALUNO:");

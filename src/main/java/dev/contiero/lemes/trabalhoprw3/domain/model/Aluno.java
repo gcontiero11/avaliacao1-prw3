@@ -1,8 +1,12 @@
 package dev.contiero.lemes.trabalhoprw3.domain.model;
 
 import java.math.BigDecimal;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class Aluno {
+    // Gerador de ID automático e incremental
+    private static final AtomicLong ID_GENERATOR = new AtomicLong(100);
+
     private final long id;
     private String nome;
     private final String ra;
@@ -11,19 +15,20 @@ public class Aluno {
     private BigDecimal nota2;
     private BigDecimal nota3;
 
-    // TODO: ID autoincrement
-    public Aluno(long id, String nome, String ra, String email, long id1, String nome1, String ra1, String email1) {
-        this.id = id1;
-        this.nome = nome1;
-        this.ra = ra1;
-        this.email = email1;
-        nota1 = new BigDecimal(0);
-        nota2 = new BigDecimal(0);
-        nota3 = new BigDecimal(0);
+    // Construtor que inicializa as notas com 0
+    public Aluno(String nome, String ra, String email) {
+        this.id = ID_GENERATOR.getAndIncrement();
+        this.nome = nome;
+        this.ra = ra;
+        this.email = email;
+        this.nota1 = BigDecimal.ZERO;
+        this.nota2 = BigDecimal.ZERO;
+        this.nota3 = BigDecimal.ZERO;
     }
 
-    public Aluno(long id, String nome, String ra, String email, BigDecimal nota1, BigDecimal nota2, BigDecimal nota3) {
-        this.id = id;
+    // Construtor que permite definir as notas
+    public Aluno(String nome, String ra, String email, BigDecimal nota1, BigDecimal nota2, BigDecimal nota3) {
+        this.id = ID_GENERATOR.getAndIncrement();
         this.nome = nome;
         this.ra = ra;
         this.email = email;
@@ -32,6 +37,7 @@ public class Aluno {
         this.nota3 = nota3;
     }
 
+    // Getters e Setters
     public long getId() {
         return id;
     }
