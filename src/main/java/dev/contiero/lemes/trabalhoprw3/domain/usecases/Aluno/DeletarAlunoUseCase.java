@@ -12,6 +12,6 @@ public class DeletarAlunoUseCase {
     }
 
     public void deletar(Aluno aluno) {
-        repository.save(Converter.toDTO(aluno));
+        repository.save(Converter.toDto(aluno));
     }
 }

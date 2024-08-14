@@ -18,13 +18,13 @@ public class AcessarAlunoUseCase {
         return null;
     }
 
-    public Aluno acessarPorId() {
-        repository.getById();
+    public Aluno acessarPorId(long id) {
+        repository.getById(id);
         return null;
     }
 
-    public Aluno acessarPorRA() {
-        repository.getByRa();
+    public Aluno acessarPorRA(String ra) {
+        repository.getByRa(ra);
         return null;
     }
 

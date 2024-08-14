@@ -4,10 +4,9 @@ import java.math.BigDecimal;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class Aluno {
-    // Gerador de ID automático e incremental
-    private static final AtomicLong ID_GENERATOR = new AtomicLong(100);
+    private static final AtomicLong ID_GENERATOR = new AtomicLong(1);
 
-    private final long id;
+    private long id;
     private String nome;
     private final String ra;
     private String email;
@@ -15,7 +14,6 @@ public class Aluno {
     private BigDecimal nota2;
     private BigDecimal nota3;
 
-    // Construtor que inicializa as notas com 0
     public Aluno(String nome, String ra, String email) {
         this.id = ID_GENERATOR.getAndIncrement();
         this.nome = nome;
@@ -26,7 +24,6 @@ public class Aluno {
         this.nota3 = BigDecimal.ZERO;
     }
 
-    // Construtor que permite definir as notas
     public Aluno(String nome, String ra, String email, BigDecimal nota1, BigDecimal nota2, BigDecimal nota3) {
         this.id = ID_GENERATOR.getAndIncrement();
         this.nome = nome;
@@ -40,6 +37,10 @@ public class Aluno {
     // Getters e Setters
     public long getId() {
         return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getNome() {

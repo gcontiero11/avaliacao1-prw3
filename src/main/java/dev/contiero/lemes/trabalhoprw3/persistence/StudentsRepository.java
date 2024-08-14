@@ -8,9 +8,9 @@ import java.util.Optional;
 public interface StudentsRepository {
     Map<AlunoDTO, Long> getAll();
 
-    Optional<AlunoDTO> getById();
+    Optional<AlunoDTO> getById(long id);
 
-    Optional<AlunoDTO> getByRa();
+    Optional<AlunoDTO> getByRa(String ra);
 
     Map<AlunoDTO, Long> getByName();
 

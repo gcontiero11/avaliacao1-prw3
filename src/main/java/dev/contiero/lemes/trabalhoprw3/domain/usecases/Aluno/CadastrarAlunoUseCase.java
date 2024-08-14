@@ -13,6 +13,6 @@ public class CadastrarAlunoUseCase {
     }
 
     public void salvar(Aluno aluno) {
-        repository.save(Converter.toDTO(aluno));
+        repository.save(Converter.toDto(aluno));
     }
 }

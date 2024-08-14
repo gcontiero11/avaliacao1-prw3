@@ -12,6 +12,6 @@ public class AlterarAlunoUseCase {
     }
 
     public void alterar(Aluno aluno) {
-        repository.update(Converter.toDTO(aluno));
+        repository.update(Converter.toDto(aluno));
     }
 }

@@ -12,12 +12,12 @@ public class H2StudentsRepository implements StudentsRepository{
     }
 
     @Override
-    public Optional<AlunoDTO> getById() {
+    public Optional<AlunoDTO> getById(long id) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<AlunoDTO> getByRa() {
+    public Optional<AlunoDTO> getByRa(String ra) {
         return Optional.empty();
     }
 
