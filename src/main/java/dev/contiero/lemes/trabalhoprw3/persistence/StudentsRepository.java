@@ -12,13 +12,7 @@ public interface StudentsRepository {
 
     Optional<AlunoDTO> getByRa(String ra);
 
-    // TODO - getById
-    Optional<AlunoDTO> getById();
-
-    // TODO - getByRa
-    Optional<AlunoDTO> getByRa();
-
-    Map<AlunoDTO, Long> getByName();
+    Map<AlunoDTO, Long> getByName(String name);
 
     boolean save(AlunoDTO aluno);
 

@@ -76,7 +76,7 @@ public class Menu {
                     System.out.println("CONSULTAR ALUNO:");
                     System.out.println("Digite o nome: ");
                     String nomeParaBuscar = scanner.nextLine();
-                    Aluno alunoEncontrado = repository.buscarPorNome(nomeParaBuscar);
+                    Aluno alunoEncontrado = repository.getByName(nomeParaBuscar);
                     if (alunoEncontrado != null) {
                         System.out.println("Aluno encontrado: " + alunoEncontrado.getNome());
                     } else {

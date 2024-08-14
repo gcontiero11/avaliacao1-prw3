@@ -28,8 +28,8 @@ public class AcessarAlunoUseCase {
         return null;
     }
 
-    public Map<Aluno, Long> acessarPeloNome() {
-        repository.getByName();
+    public Map<Aluno, Long> acessarPeloNome(String name) {
+        repository.getByName(name);
         return null;
     }
 }

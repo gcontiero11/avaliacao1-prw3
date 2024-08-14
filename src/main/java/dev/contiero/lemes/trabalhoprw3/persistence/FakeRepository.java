@@ -33,21 +33,9 @@ public class FakeRepository implements StudentsRepository {
         return Optional.empty();
     }
 
-    // TODO - getById
-    @Override
-    public Optional<AlunoDTO> getById() {
-        return Optional.empty();
-    }
-
-    // TODO - getByRa
-    @Override
-    public Optional<AlunoDTO> getByRa() {
-        return Optional.empty();
-    }
-
     // TODO - getByName
     @Override
-    public Map<AlunoDTO, Long> getByName() {
+    public Map<AlunoDTO, Long> getByName(String name) {
         return Map.of();
     }
 

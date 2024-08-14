@@ -22,7 +22,7 @@ public class H2StudentsRepository implements StudentsRepository{
     }
 
     @Override
-    public Map<AlunoDTO, Long> getByName() {
+    public Map<AlunoDTO, Long> getByName(String name) {
         return Map.of();
     }
 
