@@ -23,6 +23,16 @@ public class FakeRepository implements StudentsRepository {
         return alunos;
     }
 
+    @Override
+    public Optional<AlunoDTO> getById(long id) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<AlunoDTO> getByRa(String ra) {
+        return Optional.empty();
+    }
+
     // TODO - getById
     @Override
     public Optional<AlunoDTO> getById() {
