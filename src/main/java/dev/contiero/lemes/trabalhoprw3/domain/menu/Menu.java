@@ -1,16 +1,21 @@
 package dev.contiero.lemes.trabalhoprw3.domain.menu;
 
 import dev.contiero.lemes.trabalhoprw3.domain.model.Aluno;
-import dev.contiero.lemes.trabalhoprw3.persistence.FakeRepository;
+import dev.contiero.lemes.trabalhoprw3.domain.model.AlunoDTO;
+import dev.contiero.lemes.trabalhoprw3.domain.usecases.utils.Converter;
+import dev.contiero.lemes.trabalhoprw3.persistence.H2StudentsRepository;
+import dev.contiero.lemes.trabalhoprw3.persistence.StudentsRepository;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Scanner;
 
 public class Menu {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        FakeRepository repository = new FakeRepository();
+        StudentsRepository repository = new H2StudentsRepository();
+        Converter converter = new Converter(repository);
 
         while (true) {
             System.out.println("** CADASTRO DE ALUNOS **");
@@ -41,59 +46,152 @@ public class Menu {
                     BigDecimal nota2 = scanner.nextBigDecimal();
                     System.out.println("Digite a nota3: ");
                     BigDecimal nota3 = scanner.nextBigDecimal();
-                    Aluno aluno = new Aluno(nome, RA, email, nota1, nota2, nota3);
+
+                    // Criar o objeto Aluno e converter para AlunoDTO
+                    AlunoDTO novoAlunoDTO = converter.toDto(new Aluno(nome, RA, email, nota1, nota2, nota3));
+
+                    // Salvar o aluno no repositório
+                    boolean sucessoCadastro = repository.save(novoAlunoDTO);
+                    System.out.println(sucessoCadastro ? "Aluno cadastrado com sucesso!" : "Erro ao cadastrar o aluno.");
                     break;
+
                 case 2:
                     System.out.println("EXCLUIR ALUNO:");
                     System.out.println("Digite o nome do aluno: ");
                     String nomeExcluir = scanner.nextLine();
+
+                    // Buscar aluno pelo nome
+                    Map<AlunoDTO, Long> alunosParaExcluir = repository.getByName(nomeExcluir);
+                    if (alunosParaExcluir.isEmpty()) {
+                        System.out.println("Nenhum aluno encontrado com esse nome.");
+                    } else {
+                        AlunoDTO alunoSelecionadoExcluir = selecionarAluno(scanner, alunosParaExcluir, "excluir");
+                        if (alunoSelecionadoExcluir != null) {
+                            boolean sucessoExclusao = repository.delete(alunoSelecionadoExcluir);
+                            System.out.println(sucessoExclusao ? "Aluno excluído com sucesso!" : "Erro ao excluir o aluno.");
+                        }
+                    }
                     break;
+
                 case 3:
                     System.out.println("ALTERAR ALUNO:");
-                    System.out.println("Digite o nome: ");
-                    String nomeBuscar = scanner.nextLine();
-                    //TODO: check name
-
-                    System.out.println("-------------------------");
-                    System.out.println("Dados aluno:");
-                    //TODO: imprimir dados aluno
-
-                    System.out.println("Novos dados:");
-                    System.out.println("Digite o nome: ");
+                    System.out.println("Digite o nome do aluno: ");
                     String nomeAlterar = scanner.nextLine();
-                    System.out.println("Digite o RA: ");
-                    String RAAlterar = scanner.nextLine();
-                    System.out.println("Digite o email: ");
-                    String emailAlterar = scanner.nextLine();
-                    System.out.println("Digite a nota1: ");
-                    BigDecimal nota1Alterar = scanner.nextBigDecimal();
-                    System.out.println("Digite a nota2: ");
-                    BigDecimal nota2Alterar = scanner.nextBigDecimal();
-                    System.out.println("Digite a nota3: ");
-                    BigDecimal nota3Alterar = scanner.nextBigDecimal();
+
+                    // Buscar aluno pelo nome
+                    Map<AlunoDTO, Long> alunosParaAlterar = repository.getByName(nomeAlterar);
+                    if (alunosParaAlterar.isEmpty()) {
+                        System.out.println("Nenhum aluno encontrado com esse nome.");
+                    } else {
+                        AlunoDTO alunoSelecionadoAlterar = selecionarAluno(scanner, alunosParaAlterar, "alterar");
+                        if (alunoSelecionadoAlterar != null) {
+                            System.out.println("Dados atuais do aluno: " + alunoSelecionadoAlterar.getNome() + ", " + alunoSelecionadoAlterar.getEmail());
+
+                            // Solicitar novos dados
+                            System.out.println("Digite o novo nome (ou deixe em branco para manter o atual): ");
+                            String novoNome = scanner.nextLine();
+                            System.out.println("Digite o novo email (ou deixe em branco para manter o atual): ");
+                            String novoEmail = scanner.nextLine();
+                            System.out.println("Digite a nova nota1 (ou 0 para manter a atual): ");
+                            BigDecimal novaNota1 = scanner.nextBigDecimal();
+                            System.out.println("Digite a nova nota2 (ou 0 para manter a atual): ");
+                            BigDecimal novaNota2 = scanner.nextBigDecimal();
+                            System.out.println("Digite a nova nota3 (ou 0 para manter a atual): ");
+                            BigDecimal novaNota3 = scanner.nextBigDecimal();
+
+                            // Atualizar os dados do aluno
+                            if (!novoNome.isEmpty()) alunoSelecionadoAlterar.setNome(novoNome);
+                            if (!novoEmail.isEmpty()) alunoSelecionadoAlterar.setEmail(novoEmail);
+                            if (novaNota1.compareTo(BigDecimal.ZERO) > 0) alunoSelecionadoAlterar.setNota1(novaNota1);
+                            if (novaNota2.compareTo(BigDecimal.ZERO) > 0) alunoSelecionadoAlterar.setNota2(novaNota2);
+                            if (novaNota3.compareTo(BigDecimal.ZERO) > 0) alunoSelecionadoAlterar.setNota3(novaNota3);
+
+                            // Atualizar o aluno no repositório
+                            boolean sucessoAtualizacao = repository.update(alunoSelecionadoAlterar);
+                            System.out.println(sucessoAtualizacao ? "Aluno alterado com sucesso!" : "Erro ao alterar o aluno.");
+                        }
+                    }
                     break;
+
                 case 4:
                     System.out.println("CONSULTAR ALUNO:");
                     System.out.println("Digite o nome: ");
                     String nomeParaBuscar = scanner.nextLine();
-                    Aluno alunoEncontrado = repository.getByName(nomeParaBuscar);
-                    if (alunoEncontrado != null) {
-                        System.out.println("Aluno encontrado: " + alunoEncontrado.getNome());
+
+                    // Buscar aluno pelo nome
+                    Map<AlunoDTO, Long> alunosEncontrados = repository.getByName(nomeParaBuscar);
+                    if (alunosEncontrados.isEmpty()) {
+                        System.out.println("Nenhum aluno encontrado.");
                     } else {
-                        System.out.println("Aluno não encontrado.");
+                        for (AlunoDTO alunoDTO : alunosEncontrados.keySet()) {
+                            System.out.println("Aluno encontrado: " + alunoDTO.getNome() + ", RA: " + alunoDTO.getRa());
+                        }
                     }
                     break;
+
                 case 5:
-                    List<Aluno> alunos = repository.listar();
-                    for (Aluno a : alunos) {
-                        System.out.println("Nome: " + a.getNome() + ", Aprovado: " + a.isAprovado());
+                    System.out.println("LISTA DE ALUNOS:");
+                    Map<AlunoDTO, Long> todosAlunos = repository.getAll();
+                    if (todosAlunos.isEmpty()) {
+                        System.out.println("Nenhum aluno cadastrado.");
+                    } else {
+                        for (AlunoDTO alunoDTO : todosAlunos.keySet()) {
+                            // Calcula a média do aluno
+                            BigDecimal media = alunoDTO.getNota1()
+                                    .add(alunoDTO.getNota2())
+                                    .add(alunoDTO.getNota3())
+                                    .divide(BigDecimal.valueOf(3), 2, BigDecimal.ROUND_HALF_UP);
+
+                            // Determina a situação do aluno
+                            String situacao;
+                            if (media.compareTo(BigDecimal.valueOf(6)) >= 0) {
+                                situacao = "Aprovado";
+                            } else if (media.compareTo(BigDecimal.valueOf(4)) >= 0) {
+                                situacao = "Recuperação";
+                            } else {
+                                situacao = "Reprovado";
+                            }
+
+                            // Exibe os dados formatados do aluno
+                            System.out.println("Nome: " + alunoDTO.getNome());
+                            System.out.println("Email: " + alunoDTO.getEmail());
+                            System.out.println("RA: " + alunoDTO.getRa());
+                            System.out.println("Notas: " + alunoDTO.getNota1() + " - " + alunoDTO.getNota2() + " - " + alunoDTO.getNota3());
+                            System.out.println("Media: " + media);
+                            System.out.println("Situação: " + situacao);
+                            System.out.println();
+                        }
                     }
                     break;
+
                 default:
                     System.out.println("Opção inválida.");
             }
         }
 
         scanner.close();
+    }
+
+    private static AlunoDTO selecionarAluno(Scanner scanner, Map<AlunoDTO, Long> alunos, String acao) {
+        if (alunos.size() == 1) {
+            return alunos.keySet().iterator().next();
+        }
+
+        System.out.println("Múltiplos alunos encontrados. Selecione um aluno para " + acao + ":");
+        int i = 1;
+        for (AlunoDTO alunoDTO : alunos.keySet()) {
+            System.out.println(i + " - " + alunoDTO.getNome() + ", RA: " + alunoDTO.getRa());
+            i++;
+        }
+
+        int escolha = scanner.nextInt();
+        scanner.nextLine(); // Limpar o buffer
+
+        if (escolha > 0 && escolha <= alunos.size()) {
+            return (AlunoDTO) alunos.keySet().toArray()[escolha - 1];
+        } else {
+            System.out.println("Seleção inválida.");
+            return null;
+        }
     }
 }
