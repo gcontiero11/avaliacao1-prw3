@@ -1,21 +1,27 @@
 package dev.contiero.lemes.trabalhoprw3.domain.model;
 
+import jakarta.persistence.*;
+
 import java.math.BigDecimal;
 import java.util.concurrent.atomic.AtomicLong;
 
+@Entity
+@Table(name="aluno")
 public class Aluno {
-    private static final AtomicLong ID_GENERATOR = new AtomicLong(1);
 
+    @Id
+    @GeneratedValue
     private long id;
     private String nome;
-    private final String ra;
+    private String ra;
     private String email;
     private BigDecimal nota1;
     private BigDecimal nota2;
     private BigDecimal nota3;
 
+    public Aluno() {}
+
     public Aluno(String nome, String ra, String email) {
-        this.id = ID_GENERATOR.getAndIncrement();
         this.nome = nome;
         this.ra = ra;
         this.email = email;
@@ -25,7 +31,6 @@ public class Aluno {
     }
 
     public Aluno(String nome, String ra, String email, BigDecimal nota1, BigDecimal nota2, BigDecimal nota3) {
-        this.id = ID_GENERATOR.getAndIncrement();
         this.nome = nome;
         this.ra = ra;
         this.email = email;
