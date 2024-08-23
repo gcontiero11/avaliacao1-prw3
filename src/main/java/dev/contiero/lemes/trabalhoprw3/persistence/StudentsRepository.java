@@ -1,7 +1,6 @@
 package dev.contiero.lemes.trabalhoprw3.persistence;
 
 import dev.contiero.lemes.trabalhoprw3.domain.model.Aluno;
-import dev.contiero.lemes.trabalhoprw3.domain.model.AlunoDTO;
 
 import java.util.Map;
 import java.util.Optional;
