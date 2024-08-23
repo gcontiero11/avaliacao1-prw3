@@ -1,6 +1,6 @@
 package dev.contiero.lemes.trabalhoprw3.persistence;
 
-import dev.contiero.lemes.trabalhoprw3.domain.model.AlunoDTO;
+import dev.contiero.lemes.trabalhoprw3.domain.model.Aluno;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
@@ -18,50 +18,50 @@ public class H2StudentsRepository implements StudentsRepository {
     }
 
     @Override
-    public Map<AlunoDTO, Long> getAll() {
+    public Map<Aluno, Long> getAll() {
         String jpql = "SELECT a FROM Aluno a";
-        TypedQuery<AlunoDTO> query = em.createQuery(jpql, AlunoDTO.class);
-        List<AlunoDTO> resultList = query.getResultList();
+        TypedQuery<Aluno> query = em.createQuery(jpql, Aluno.class);
+        List<Aluno> resultList = query.getResultList();
 
-        Map<AlunoDTO, Long> alunos = new HashMap<>();
-        for (AlunoDTO aluno : resultList) {
+        Map<Aluno, Long> alunos = new HashMap<>();
+        for (Aluno aluno : resultList) {
             alunos.put(aluno, aluno.getId());
         }
         return alunos;
     }
 
     @Override
-    public Optional<AlunoDTO> getById(long id) {
-        AlunoDTO aluno = em.find(AlunoDTO.class, id);
+    public Optional<Aluno> getById(long id) {
+        Aluno aluno = em.find(Aluno.class, id);
         return aluno != null ? Optional.of(aluno) : Optional.empty();
     }
 
     @Override
-    public Optional<AlunoDTO> getByRa(String ra) {
+    public Optional<Aluno> getByRa(String ra) {
         String jpql = "SELECT a FROM Aluno a WHERE a.ra = :ra";
-        TypedQuery<AlunoDTO> query = em.createQuery(jpql, AlunoDTO.class);
+        TypedQuery<Aluno> query = em.createQuery(jpql, Aluno.class);
         query.setParameter("ra", ra);
 
-        List<AlunoDTO> resultList = query.getResultList();
+        List<Aluno> resultList = query.getResultList();
         return resultList.isEmpty() ? Optional.empty() : Optional.of(resultList.get(0));
     }
 
     @Override
-    public Map<AlunoDTO, Long> getByName(String name) {
+    public Map<Aluno, Long> getByName(String name) {
         String jpql = "SELECT a FROM Aluno a WHERE a.nome = :name";
-        TypedQuery<AlunoDTO> query = em.createQuery(jpql, AlunoDTO.class);
+        TypedQuery<Aluno> query = em.createQuery(jpql, Aluno.class);
         query.setParameter("name", name);
 
-        List<AlunoDTO> resultList = query.getResultList();
-        Map<AlunoDTO, Long> alunos = new HashMap<>();
-        for (AlunoDTO aluno : resultList) {
+        List<Aluno> resultList = query.getResultList();
+        Map<Aluno, Long> alunos = new HashMap<>();
+        for (Aluno aluno : resultList) {
             alunos.put(aluno, aluno.getId());
         }
         return alunos;
     }
 
     @Override
-    public boolean save(AlunoDTO aluno) {
+    public boolean save(Aluno aluno) {
         try {
             em.persist(aluno);
             return true;
@@ -72,7 +72,7 @@ public class H2StudentsRepository implements StudentsRepository {
     }
 
     @Override
-    public boolean update(AlunoDTO aluno) {
+    public boolean update(Aluno aluno) {
         try {
             em.merge(aluno);
             return true;
@@ -83,9 +83,9 @@ public class H2StudentsRepository implements StudentsRepository {
     }
 
     @Override
-    public boolean delete(AlunoDTO aluno) {
+    public boolean delete(Aluno aluno) {
         try {
-            AlunoDTO alunoToDelete = em.find(AlunoDTO.class, aluno.getId());
+            Aluno alunoToDelete = em.find(Aluno.class, aluno.getId());
             if (alunoToDelete != null) {
                 em.remove(alunoToDelete);
                 return true;

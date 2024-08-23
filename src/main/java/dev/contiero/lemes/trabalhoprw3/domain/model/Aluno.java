@@ -3,10 +3,8 @@ package dev.contiero.lemes.trabalhoprw3.domain.model;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Entity
-@Table(name="aluno")
 public class Aluno {
 
     @Id
