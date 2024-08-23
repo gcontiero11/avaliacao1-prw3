@@ -3,8 +3,10 @@ package dev.contiero.lemes.trabalhoprw3.domain.menu;
 import dev.contiero.lemes.trabalhoprw3.domain.model.Aluno;
 import dev.contiero.lemes.trabalhoprw3.domain.model.AlunoDTO;
 import dev.contiero.lemes.trabalhoprw3.domain.usecases.utils.Converter;
+import dev.contiero.lemes.trabalhoprw3.domain.usecases.utils.JPAUtil;
 import dev.contiero.lemes.trabalhoprw3.persistence.H2StudentsRepository;
 import dev.contiero.lemes.trabalhoprw3.persistence.StudentsRepository;
+import jakarta.persistence.EntityManager;
 
 import java.math.BigDecimal;
 import java.util.Map;
@@ -14,7 +16,8 @@ import java.util.Scanner;
 public class Menu {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        StudentsRepository repository = new H2StudentsRepository();
+        EntityManager em = JPAUtil.getEntityManager();
+        StudentsRepository repository = new H2StudentsRepository(em);
         Converter converter = new Converter(repository);
 
         while (true) {
@@ -26,8 +29,9 @@ public class Menu {
             System.out.println("5 - Listar alunos (com status aprovação)");
             System.out.println("6 - FIM");
 
+            System.out.println("Digite a opção:");
             int opcao = scanner.nextInt();
-            scanner.nextLine(); // Limpar buffer
+            scanner.nextLine();
 
             if (opcao == 6) break;
 
@@ -47,10 +51,8 @@ public class Menu {
                     System.out.println("Digite a nota3: ");
                     BigDecimal nota3 = scanner.nextBigDecimal();
 
-                    // Criar o objeto Aluno e converter para AlunoDTO
                     AlunoDTO novoAlunoDTO = converter.toDto(new Aluno(nome, RA, email, nota1, nota2, nota3));
 
-                    // Salvar o aluno no repositório
                     boolean sucessoCadastro = repository.save(novoAlunoDTO);
                     System.out.println(sucessoCadastro ? "Aluno cadastrado com sucesso!" : "Erro ao cadastrar o aluno.");
                     break;
@@ -60,7 +62,6 @@ public class Menu {
                     System.out.println("Digite o nome do aluno: ");
                     String nomeExcluir = scanner.nextLine();
 
-                    // Buscar aluno pelo nome
                     Map<AlunoDTO, Long> alunosParaExcluir = repository.getByName(nomeExcluir);
                     if (alunosParaExcluir.isEmpty()) {
                         System.out.println("Nenhum aluno encontrado com esse nome.");
@@ -78,7 +79,6 @@ public class Menu {
                     System.out.println("Digite o nome do aluno: ");
                     String nomeAlterar = scanner.nextLine();
 
-                    // Buscar aluno pelo nome
                     Map<AlunoDTO, Long> alunosParaAlterar = repository.getByName(nomeAlterar);
                     if (alunosParaAlterar.isEmpty()) {
                         System.out.println("Nenhum aluno encontrado com esse nome.");
@@ -87,7 +87,6 @@ public class Menu {
                         if (alunoSelecionadoAlterar != null) {
                             System.out.println("Dados atuais do aluno: " + alunoSelecionadoAlterar.getNome() + ", " + alunoSelecionadoAlterar.getEmail());
 
-                            // Solicitar novos dados
                             System.out.println("Digite o novo nome (ou deixe em branco para manter o atual): ");
                             String novoNome = scanner.nextLine();
                             System.out.println("Digite o novo email (ou deixe em branco para manter o atual): ");
@@ -99,14 +98,12 @@ public class Menu {
                             System.out.println("Digite a nova nota3 (ou 0 para manter a atual): ");
                             BigDecimal novaNota3 = scanner.nextBigDecimal();
 
-                            // Atualizar os dados do aluno
                             if (!novoNome.isEmpty()) alunoSelecionadoAlterar.setNome(novoNome);
                             if (!novoEmail.isEmpty()) alunoSelecionadoAlterar.setEmail(novoEmail);
                             if (novaNota1.compareTo(BigDecimal.ZERO) > 0) alunoSelecionadoAlterar.setNota1(novaNota1);
                             if (novaNota2.compareTo(BigDecimal.ZERO) > 0) alunoSelecionadoAlterar.setNota2(novaNota2);
                             if (novaNota3.compareTo(BigDecimal.ZERO) > 0) alunoSelecionadoAlterar.setNota3(novaNota3);
 
-                            // Atualizar o aluno no repositório
                             boolean sucessoAtualizacao = repository.update(alunoSelecionadoAlterar);
                             System.out.println(sucessoAtualizacao ? "Aluno alterado com sucesso!" : "Erro ao alterar o aluno.");
                         }
@@ -118,7 +115,6 @@ public class Menu {
                     System.out.println("Digite o nome: ");
                     String nomeParaBuscar = scanner.nextLine();
 
-                    // Buscar aluno pelo nome
                     Map<AlunoDTO, Long> alunosEncontrados = repository.getByName(nomeParaBuscar);
                     if (alunosEncontrados.isEmpty()) {
                         System.out.println("Nenhum aluno encontrado.");
@@ -136,13 +132,11 @@ public class Menu {
                         System.out.println("Nenhum aluno cadastrado.");
                     } else {
                         for (AlunoDTO alunoDTO : todosAlunos.keySet()) {
-                            // Calcula a média do aluno
                             BigDecimal media = alunoDTO.getNota1()
                                     .add(alunoDTO.getNota2())
                                     .add(alunoDTO.getNota3())
                                     .divide(BigDecimal.valueOf(3), 2, BigDecimal.ROUND_HALF_UP);
 
-                            // Determina a situação do aluno
                             String situacao;
                             if (media.compareTo(BigDecimal.valueOf(6)) >= 0) {
                                 situacao = "Aprovado";
@@ -152,7 +146,6 @@ public class Menu {
                                 situacao = "Reprovado";
                             }
 
-                            // Exibe os dados formatados do aluno
                             System.out.println("Nome: " + alunoDTO.getNome());
                             System.out.println("Email: " + alunoDTO.getEmail());
                             System.out.println("RA: " + alunoDTO.getRa());
@@ -185,7 +178,7 @@ public class Menu {
         }
 
         int escolha = scanner.nextInt();
-        scanner.nextLine(); // Limpar o buffer
+        scanner.nextLine();
 
         if (escolha > 0 && escolha <= alunos.size()) {
             return (AlunoDTO) alunos.keySet().toArray()[escolha - 1];
