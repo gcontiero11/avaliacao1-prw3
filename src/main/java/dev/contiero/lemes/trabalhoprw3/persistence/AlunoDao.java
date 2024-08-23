@@ -3,26 +3,31 @@ package dev.contiero.lemes.trabalhoprw3.persistence;
 import dev.contiero.lemes.trabalhoprw3.domain.model.Aluno;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.TypedQuery;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class H2StudentsRepository implements StudentsRepository {
+public class AlunoDao {
 
-    private final EntityManager em;
+    private final EntityManagerFactory factory;
 
-    public H2StudentsRepository(EntityManager em) {
-        this.em = em;
+    public AlunoDao(EntityManagerFactory factory) {
+        this.factory = factory;
     }
 
-    @Override
+
     public Map<Aluno, Long> getAll() {
         String jpql = "SELECT a FROM Aluno a";
+        EntityManager em = factory.createEntityManager();
+        em.getTransaction().begin();
         TypedQuery<Aluno> query = em.createQuery(jpql, Aluno.class);
         List<Aluno> resultList = query.getResultList();
-
+        em.getTransaction().commit();
+        em.close();
         Map<Aluno, Long> alunos = new HashMap<>();
         for (Aluno aluno : resultList) {
             alunos.put(aluno, aluno.getId());
@@ -30,28 +35,37 @@ public class H2StudentsRepository implements StudentsRepository {
         return alunos;
     }
 
-    @Override
+
     public Optional<Aluno> getById(long id) {
+        EntityManager em = factory.createEntityManager();
+        em.getTransaction().begin();
         Aluno aluno = em.find(Aluno.class, id);
+        em.getTransaction().commit();
+        em.close();
         return aluno != null ? Optional.of(aluno) : Optional.empty();
     }
 
-    @Override
+
     public Optional<Aluno> getByRa(String ra) {
         String jpql = "SELECT a FROM Aluno a WHERE a.ra = :ra";
+        EntityManager em = factory.createEntityManager();
+        em.getTransaction().begin();
         TypedQuery<Aluno> query = em.createQuery(jpql, Aluno.class);
         query.setParameter("ra", ra);
-
         List<Aluno> resultList = query.getResultList();
+
+        em.getTransaction().commit();
+        em.close();
         return resultList.isEmpty() ? Optional.empty() : Optional.of(resultList.get(0));
     }
 
-    @Override
+
     public Map<Aluno, Long> getByName(String name) {
         String jpql = "SELECT a FROM Aluno a WHERE a.nome = :name";
+        EntityManager em = factory.createEntityManager();
         TypedQuery<Aluno> query = em.createQuery(jpql, Aluno.class);
         query.setParameter("name", name);
-
+        System.out.println(query.getResultStream());
         List<Aluno> resultList = query.getResultList();
         Map<Aluno, Long> alunos = new HashMap<>();
         for (Aluno aluno : resultList) {
@@ -60,10 +74,14 @@ public class H2StudentsRepository implements StudentsRepository {
         return alunos;
     }
 
-    @Override
+
     public boolean save(Aluno aluno) {
+        EntityManager em = factory.createEntityManager();
         try {
+            em.getTransaction().begin();
             em.persist(aluno);
+            em.getTransaction().commit();
+            em.close();
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -71,10 +89,14 @@ public class H2StudentsRepository implements StudentsRepository {
         }
     }
 
-    @Override
+
     public boolean update(Aluno aluno) {
         try {
+            EntityManager em = factory.createEntityManager();
+            em.getTransaction().begin();
             em.merge(aluno);
+            em.getTransaction().commit();
+            em.close();
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -82,17 +104,21 @@ public class H2StudentsRepository implements StudentsRepository {
         }
     }
 
-    @Override
+
     public boolean delete(Aluno aluno) {
+        EntityManager em = factory.createEntityManager();
         try {
+            em.getTransaction().begin();
             Aluno alunoToDelete = em.find(Aluno.class, aluno.getId());
             if (alunoToDelete != null) {
                 em.remove(alunoToDelete);
                 return true;
             }
+            em.getTransaction().commit();
         } catch (Exception e) {
             e.printStackTrace();
         }
+        em.close();
         return false;
     }
 }

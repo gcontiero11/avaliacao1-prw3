@@ -1,10 +1,9 @@
 package dev.contiero.lemes.trabalhoprw3.domain.menu;
 
 import dev.contiero.lemes.trabalhoprw3.domain.model.Aluno;
-import dev.contiero.lemes.trabalhoprw3.domain.usecases.utils.JPAUtil;
-import dev.contiero.lemes.trabalhoprw3.persistence.H2StudentsRepository;
-import dev.contiero.lemes.trabalhoprw3.persistence.StudentsRepository;
-import jakarta.persistence.EntityManager;
+import dev.contiero.lemes.trabalhoprw3.persistence.AlunoDao;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 
 import java.math.BigDecimal;
 import java.util.Map;
@@ -13,8 +12,8 @@ import java.util.Scanner;
 public class Menu {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        EntityManager em = JPAUtil.getEntityManager();
-        StudentsRepository repository = new H2StudentsRepository(em);
+        EntityManagerFactory factory = Persistence.createEntityManagerFactory("banco");
+        AlunoDao dao = new AlunoDao(factory);
 
         while (true) {
             System.out.println("** CADASTRO DE ALUNOS **");
@@ -49,7 +48,7 @@ public class Menu {
 
                     Aluno novoAluno = new Aluno(nome, RA, email, nota1, nota2, nota3);
 
-                    boolean sucessoCadastro = repository.save(novoAluno);
+                    boolean sucessoCadastro = dao.save(novoAluno);
                     System.out.println(sucessoCadastro ? "Aluno cadastrado com sucesso!" : "Erro ao cadastrar o aluno.");
                     break;
 
@@ -58,13 +57,13 @@ public class Menu {
                     System.out.println("Digite o nome do aluno: ");
                     String nomeExcluir = scanner.nextLine();
 
-                    Map<Aluno, Long> alunosParaExcluir = repository.getByName(nomeExcluir);
+                    Map<Aluno, Long> alunosParaExcluir = dao.getByName(nomeExcluir);
                     if (alunosParaExcluir.isEmpty()) {
                         System.out.println("Nenhum aluno encontrado com esse nome.");
                     } else {
                         Aluno alunoSelecionadoExcluir = selecionarAluno(scanner, alunosParaExcluir, "excluir");
                         if (alunoSelecionadoExcluir != null) {
-                            boolean sucessoExclusao = repository.delete(alunoSelecionadoExcluir);
+                            boolean sucessoExclusao = dao.delete(alunoSelecionadoExcluir);
                             System.out.println(sucessoExclusao ? "Aluno excluído com sucesso!" : "Erro ao excluir o aluno.");
                         }
                     }
@@ -75,33 +74,13 @@ public class Menu {
                     System.out.println("Digite o nome do aluno: ");
                     String nomeAlterar = scanner.nextLine();
 
-                    Map<Aluno, Long> alunosParaAlterar = repository.getByName(nomeAlterar);
+                    Map<Aluno, Long> alunosParaAlterar = dao.getByName(nomeAlterar);
                     if (alunosParaAlterar.isEmpty()) {
                         System.out.println("Nenhum aluno encontrado com esse nome.");
                     } else {
-                        Aluno alunoSelecionadoAlterar = selecionarAluno(scanner, alunosParaAlterar, "alterar");
-                        if (alunoSelecionadoAlterar != null) {
-                            System.out.println("Dados atuais do aluno: " + alunoSelecionadoAlterar.getNome() + ", " + alunoSelecionadoAlterar.getEmail());
-
-                            System.out.println("Digite o novo nome (ou deixe em branco para manter o atual): ");
-                            String novoNome = scanner.nextLine();
-                            System.out.println("Digite o novo email (ou deixe em branco para manter o atual): ");
-                            String novoEmail = scanner.nextLine();
-                            System.out.println("Digite a nova nota1 (ou 0 para manter a atual): ");
-                            BigDecimal novaNota1 = scanner.nextBigDecimal();
-                            System.out.println("Digite a nova nota2 (ou 0 para manter a atual): ");
-                            BigDecimal novaNota2 = scanner.nextBigDecimal();
-                            System.out.println("Digite a nova nota3 (ou 0 para manter a atual): ");
-                            BigDecimal novaNota3 = scanner.nextBigDecimal();
-
-                            if (!novoNome.isEmpty()) alunoSelecionadoAlterar.setNome(novoNome);
-                            if (!novoEmail.isEmpty()) alunoSelecionadoAlterar.setEmail(novoEmail);
-                            if (novaNota1.compareTo(BigDecimal.ZERO) > 0) alunoSelecionadoAlterar.setNota1(novaNota1);
-                            if (novaNota2.compareTo(BigDecimal.ZERO) > 0) alunoSelecionadoAlterar.setNota2(novaNota2);
-                            if (novaNota3.compareTo(BigDecimal.ZERO) > 0) alunoSelecionadoAlterar.setNota3(novaNota3);
-
-                            boolean sucessoAtualizacao = repository.update(alunoSelecionadoAlterar);
-                            System.out.println(sucessoAtualizacao ? "Aluno alterado com sucesso!" : "Erro ao alterar o aluno.");
+                        Aluno alunoParaAlterar = selecionarAluno(scanner, alunosParaAlterar, "alterar");
+                        if (alunoParaAlterar != null) {
+                            alteraAluno(alunoParaAlterar, scanner, dao);
                         }
                     }
                     break;
@@ -111,7 +90,7 @@ public class Menu {
                     System.out.println("Digite o nome: ");
                     String nomeParaBuscar = scanner.nextLine();
 
-                    Map<Aluno, Long> alunosEncontrados = repository.getByName(nomeParaBuscar);
+                    Map<Aluno, Long> alunosEncontrados = dao.getByName(nomeParaBuscar);
                     if (alunosEncontrados.isEmpty()) {
                         System.out.println("Nenhum aluno encontrado.");
                     } else {
@@ -123,33 +102,11 @@ public class Menu {
 
                 case 5:
                     System.out.println("LISTA DE ALUNOS:");
-                    Map<Aluno, Long> todosAlunos = repository.getAll();
+                    Map<Aluno, Long> todosAlunos = dao.getAll();
                     if (todosAlunos.isEmpty()) {
                         System.out.println("Nenhum aluno cadastrado.");
                     } else {
-                        for (Aluno aluno : todosAlunos.keySet()) {
-                            BigDecimal media = aluno.getNota1()
-                                    .add(aluno.getNota2())
-                                    .add(aluno.getNota3())
-                                    .divide(BigDecimal.valueOf(3), 2, BigDecimal.ROUND_HALF_UP);
-
-                            String situacao;
-                            if (media.compareTo(BigDecimal.valueOf(6)) >= 0) {
-                                situacao = "Aprovado";
-                            } else if (media.compareTo(BigDecimal.valueOf(4)) >= 0) {
-                                situacao = "Recuperação";
-                            } else {
-                                situacao = "Reprovado";
-                            }
-
-                            System.out.println("Nome: " + aluno.getNome());
-                            System.out.println("Email: " + aluno.getEmail());
-                            System.out.println("RA: " + aluno.getRa());
-                            System.out.println("Notas: " + aluno.getNota1() + " - " + aluno.getNota2() + " - " + aluno.getNota3());
-                            System.out.println("Media: " + media);
-                            System.out.println("Situação: " + situacao);
-                            System.out.println();
-                        }
+                        printaAlunos(todosAlunos);
                     }
                     break;
 
@@ -159,6 +116,56 @@ public class Menu {
         }
 
         scanner.close();
+    }
+
+    private static void printaAlunos(Map<Aluno, Long> todosAlunos) {
+        for (Aluno aluno : todosAlunos.keySet()) {
+            BigDecimal media = aluno.getNota1()
+                    .add(aluno.getNota2())
+                    .add(aluno.getNota3())
+                    .divide(BigDecimal.valueOf(3), 2, BigDecimal.ROUND_HALF_UP);
+
+            String situacao;
+            if (media.compareTo(BigDecimal.valueOf(6)) >= 0) {
+                situacao = "Aprovado";
+            } else if (media.compareTo(BigDecimal.valueOf(4)) >= 0) {
+                situacao = "Recuperação";
+            } else {
+                situacao = "Reprovado";
+            }
+
+            System.out.println("Nome: " + aluno.getNome());
+            System.out.println("Email: " + aluno.getEmail());
+            System.out.println("RA: " + aluno.getRa());
+            System.out.println("Notas: " + aluno.getNota1() + " - " + aluno.getNota2() + " - " + aluno.getNota3());
+            System.out.println("Media: " + media);
+            System.out.println("Situação: " + situacao);
+            System.out.println();
+        }
+    }
+
+    private static void alteraAluno(Aluno alunoSelecionadoAlterar, Scanner scanner, AlunoDao dao) {
+        System.out.println("Dados atuais do aluno: " + alunoSelecionadoAlterar.getNome() + ", " + alunoSelecionadoAlterar.getEmail());
+
+        System.out.println("Digite o novo nome (ou deixe em branco para manter o atual): ");
+        String novoNome = scanner.nextLine();
+        System.out.println("Digite o novo email (ou deixe em branco para manter o atual): ");
+        String novoEmail = scanner.nextLine();
+        System.out.println("Digite a nova nota1 (ou 0 para manter a atual): ");
+        BigDecimal novaNota1 = scanner.nextBigDecimal();
+        System.out.println("Digite a nova nota2 (ou 0 para manter a atual): ");
+        BigDecimal novaNota2 = scanner.nextBigDecimal();
+        System.out.println("Digite a nova nota3 (ou 0 para manter a atual): ");
+        BigDecimal novaNota3 = scanner.nextBigDecimal();
+
+        if (!novoNome.isEmpty()) alunoSelecionadoAlterar.setNome(novoNome);
+        if (!novoEmail.isEmpty()) alunoSelecionadoAlterar.setEmail(novoEmail);
+        if (novaNota1.compareTo(BigDecimal.ZERO) > 0) alunoSelecionadoAlterar.setNota1(novaNota1);
+        if (novaNota2.compareTo(BigDecimal.ZERO) > 0) alunoSelecionadoAlterar.setNota2(novaNota2);
+        if (novaNota3.compareTo(BigDecimal.ZERO) > 0) alunoSelecionadoAlterar.setNota3(novaNota3);
+
+        boolean sucessoAtualizacao = dao.update(alunoSelecionadoAlterar);
+        System.out.println(sucessoAtualizacao ? "Aluno alterado com sucesso!" : "Erro ao alterar o aluno.");
     }
 
     private static Aluno selecionarAluno(Scanner scanner, Map<Aluno, Long> alunos, String acao) {

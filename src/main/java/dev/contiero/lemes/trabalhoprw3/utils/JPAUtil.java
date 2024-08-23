@@ -1,4 +1,4 @@
-package dev.contiero.lemes.trabalhoprw3.domain.usecases.utils;
+package dev.contiero.lemes.trabalhoprw3.utils;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
