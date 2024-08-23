@@ -51,7 +51,7 @@ public class Menu {
                     System.out.println("Digite a nota3: ");
                     BigDecimal nota3 = scanner.nextBigDecimal();
 
-                    AlunoDTO novoAlunoDTO = converter.toDto(new Aluno(nome, RA, email, nota1, nota2, nota3));
+                    AlunoDTO novoAlunoDTO = Converter.toDto(new Aluno(nome, RA, email, nota1, nota2, nota3));
 
                     boolean sucessoCadastro = repository.save(novoAlunoDTO);
                     System.out.println(sucessoCadastro ? "Aluno cadastrado com sucesso!" : "Erro ao cadastrar o aluno.");

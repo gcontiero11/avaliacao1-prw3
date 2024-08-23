@@ -14,7 +14,6 @@ public class Converter {
         this.repository = repository;
     }
 
-    // Converte um objeto Aluno para AlunoDTO
     public static AlunoDTO toDto(Aluno aluno) {
         if (aluno == null) {
             return null;
@@ -30,25 +29,21 @@ public class Converter {
         );
     }
 
-    // Converte um objeto AlunoDTO para Aluno, verificando se já existe no sistema
     public Aluno fromDto(AlunoDTO alunoDto) {
         if (alunoDto == null) {
             return null;
         }
 
-        // Verifica se o aluno já existe no repositório pelo ID
         Optional<AlunoDTO> alunoExistenteOptional = repository.getById(alunoDto.getId());
         if (alunoExistenteOptional.isPresent()) {
-            return fromDtoToAluno(alunoExistenteOptional.get()); // Converte o AlunoDTO existente para Aluno e retorna
+            return fromDtoToAluno(alunoExistenteOptional.get());
         }
 
-        // Verifica se já existe um aluno com o mesmo RA no repositório
         Optional<AlunoDTO> alunoPorRaOptional = repository.getByRa(alunoDto.getRa());
         if (alunoPorRaOptional.isPresent()) {
-            return fromDtoToAluno(alunoPorRaOptional.get()); // Converte o AlunoDTO existente para Aluno e retorna
+            return fromDtoToAluno(alunoPorRaOptional.get());
         }
 
-        // Se não existe, cria um novo objeto Aluno
         Aluno novoAluno = new Aluno(
                 alunoDto.getNome(),
                 alunoDto.getRa(),
@@ -58,16 +53,13 @@ public class Converter {
                 alunoDto.getNota3()
         );
 
-        // Define o ID do novo aluno para coincidir com o do DTO
         novoAluno.setId(alunoDto.getId());
 
-        // Salva o novo aluno no repositório
         repository.save(toDto(novoAluno));
 
         return novoAluno;
     }
 
-    // Método auxiliar para converter AlunoDTO para Aluno
     private Aluno fromDtoToAluno(AlunoDTO alunoDto) {
         return new Aluno(
                 alunoDto.getNome(),

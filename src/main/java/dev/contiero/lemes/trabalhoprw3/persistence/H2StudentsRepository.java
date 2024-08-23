@@ -19,7 +19,7 @@ public class H2StudentsRepository implements StudentsRepository {
 
     @Override
     public Map<AlunoDTO, Long> getAll() {
-        String jpql = "SELECT a FROM AlunoDTO a";
+        String jpql = "SELECT a FROM Aluno a";
         TypedQuery<AlunoDTO> query = em.createQuery(jpql, AlunoDTO.class);
         List<AlunoDTO> resultList = query.getResultList();
 
@@ -38,7 +38,7 @@ public class H2StudentsRepository implements StudentsRepository {
 
     @Override
     public Optional<AlunoDTO> getByRa(String ra) {
-        String jpql = "SELECT a FROM AlunoDTO a WHERE a.ra = :ra";
+        String jpql = "SELECT a FROM Aluno a WHERE a.ra = :ra";
         TypedQuery<AlunoDTO> query = em.createQuery(jpql, AlunoDTO.class);
         query.setParameter("ra", ra);
 
@@ -48,7 +48,7 @@ public class H2StudentsRepository implements StudentsRepository {
 
     @Override
     public Map<AlunoDTO, Long> getByName(String name) {
-        String jpql = "SELECT a FROM AlunoDTO a WHERE a.nome = :name";
+        String jpql = "SELECT a FROM Aluno a WHERE a.nome = :name";
         TypedQuery<AlunoDTO> query = em.createQuery(jpql, AlunoDTO.class);
         query.setParameter("name", name);
 
