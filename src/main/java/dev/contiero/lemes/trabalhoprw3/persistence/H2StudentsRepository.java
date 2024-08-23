@@ -1,7 +1,5 @@
 package dev.contiero.lemes.trabalhoprw3.persistence;
 
-import dev.contiero.lemes.trabalhoprw3.domain.model.AlunoDTO;
-
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import java.util.HashMap;

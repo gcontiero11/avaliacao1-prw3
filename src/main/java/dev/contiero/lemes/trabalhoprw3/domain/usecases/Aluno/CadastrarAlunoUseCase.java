@@ -1,8 +1,6 @@
 package dev.contiero.lemes.trabalhoprw3.domain.usecases.Aluno;
 
 import dev.contiero.lemes.trabalhoprw3.domain.model.Aluno;
-import dev.contiero.lemes.trabalhoprw3.domain.model.AlunoDTO;
-import dev.contiero.lemes.trabalhoprw3.domain.usecases.utils.Converter;
 import dev.contiero.lemes.trabalhoprw3.persistence.StudentsRepository;
 
 public class CadastrarAlunoUseCase {

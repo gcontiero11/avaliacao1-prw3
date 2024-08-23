@@ -1,8 +1,6 @@
 package dev.contiero.lemes.trabalhoprw3.domain.usecases.Aluno;
 
 import dev.contiero.lemes.trabalhoprw3.domain.model.Aluno;
-import dev.contiero.lemes.trabalhoprw3.domain.model.AlunoDTO;
-import dev.contiero.lemes.trabalhoprw3.domain.usecases.utils.Converter;
 import dev.contiero.lemes.trabalhoprw3.persistence.StudentsRepository;
 
 import java.util.HashMap;
@@ -11,11 +9,9 @@ import java.util.Optional;
 
 public class AcessarAlunoUseCase {
     private final StudentsRepository repository;
-    private final Converter converter;
 
-    public AcessarAlunoUseCase(StudentsRepository repository, Converter converter) {
+    public AcessarAlunoUseCase(StudentsRepository repository) {
         this.repository = repository;
-        this.converter = converter;
     }
 
     public Map<Aluno, Long> acessarTodos() {

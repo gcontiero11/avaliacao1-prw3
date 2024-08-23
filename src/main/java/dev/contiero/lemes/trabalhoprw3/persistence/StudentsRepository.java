@@ -1,23 +1,23 @@
 package dev.contiero.lemes.trabalhoprw3.persistence;
 
-import dev.contiero.lemes.trabalhoprw3.domain.model.AlunoDTO;
+import dev.contiero.lemes.trabalhoprw3.domain.model.Aluno;
 
 import java.util.Map;
 import java.util.Optional;
 
 public interface StudentsRepository {
-    Map<AlunoDTO, Long> getAll();
+    Map<Aluno, Long> getAll();
 
-    Optional<AlunoDTO> getById(long id);
+    Optional<Aluno> getById(long id);
 
-    Optional<AlunoDTO> getByRa(String ra);
+    Optional<Aluno> getByRa(String ra);
 
-    Map<AlunoDTO, Long> getByName(String name);
+    Map<Aluno, Long> getByName(String name);
 
-    boolean save(AlunoDTO aluno);
+    boolean save(Aluno aluno);
 
-    boolean update(AlunoDTO aluno);
+    boolean update(Aluno aluno);
 
-    boolean delete(AlunoDTO aluno);
+    boolean delete(Aluno aluno);
 
 }
