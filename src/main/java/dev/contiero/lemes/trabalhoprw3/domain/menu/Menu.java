@@ -11,6 +11,8 @@ import java.util.Scanner;
 
 public class Menu {
     public static void main(String[] args) {
+        //Gustavo Gomes Contiero
+        //Heito Lemes Caldas
         Scanner scanner = new Scanner(System.in);
         AlunoDao dao = new AlunoDao();
 
@@ -20,7 +22,7 @@ public class Menu {
             System.out.println("2 - Excluir aluno");
             System.out.println("3 - Alterar aluno");
             System.out.println("4 - Buscar aluno pelo nome");
-            System.out.println("5 - Listar alunos (com status aprovação)");
+            System.out.println("5 - Listar alunos");
             System.out.println("6 - FIM");
 
             System.out.println("Digite a opção:");
@@ -158,18 +160,18 @@ public class Menu {
         String novoNome = scanner.nextLine();
         System.out.println("Digite o novo email (ou deixe em branco para manter o atual): ");
         String novoEmail = scanner.nextLine();
-        System.out.println("Digite a nova nota1 (ou 0 para manter a atual): ");
+        System.out.println("Digite a nova nota1 (ou -1 para manter a atual): ");
         BigDecimal novaNota1 = scanner.nextBigDecimal();
-        System.out.println("Digite a nova nota2 (ou 0 para manter a atual): ");
+        System.out.println("Digite a nova nota2 (ou -1 para manter a atual): ");
         BigDecimal novaNota2 = scanner.nextBigDecimal();
-        System.out.println("Digite a nova nota3 (ou 0 para manter a atual): ");
+        System.out.println("Digite a nova nota3 (ou -1 para manter a atual): ");
         BigDecimal novaNota3 = scanner.nextBigDecimal();
 
         if (!novoNome.isEmpty()) alunoSelecionadoAlterar.setNome(novoNome);
         if (!novoEmail.isEmpty()) alunoSelecionadoAlterar.setEmail(novoEmail);
-        if (novaNota1.compareTo(BigDecimal.ZERO) > 0) alunoSelecionadoAlterar.setNota1(novaNota1);
-        if (novaNota2.compareTo(BigDecimal.ZERO) > 0) alunoSelecionadoAlterar.setNota2(novaNota2);
-        if (novaNota3.compareTo(BigDecimal.ZERO) > 0) alunoSelecionadoAlterar.setNota3(novaNota3);
+        if (novaNota1.compareTo(BigDecimal.valueOf(-1)) > 0) alunoSelecionadoAlterar.setNota1(novaNota1);
+        if (novaNota2.compareTo(BigDecimal.valueOf(-1)) > 0) alunoSelecionadoAlterar.setNota2(novaNota2);
+        if (novaNota3.compareTo(BigDecimal.valueOf(-1)) > 0) alunoSelecionadoAlterar.setNota3(novaNota3);
 
         boolean sucessoAtualizacao = dao.update(alunoSelecionadoAlterar);
         System.out.println(sucessoAtualizacao ? "Aluno alterado com sucesso!" : "Erro ao alterar o aluno.");
