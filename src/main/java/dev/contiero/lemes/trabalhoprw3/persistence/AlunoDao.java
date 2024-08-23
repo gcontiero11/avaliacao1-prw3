@@ -4,6 +4,7 @@ import dev.contiero.lemes.trabalhoprw3.domain.model.Aluno;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 import jakarta.persistence.TypedQuery;
 
 import java.util.HashMap;
@@ -13,10 +14,10 @@ import java.util.Optional;
 
 public class AlunoDao {
 
-    private final EntityManagerFactory factory;
+    EntityManagerFactory factory;
 
-    public AlunoDao(EntityManagerFactory factory) {
-        this.factory = factory;
+    public AlunoDao() {
+        this.factory = Persistence.createEntityManagerFactory("banco");
     }
 
 
@@ -104,21 +105,25 @@ public class AlunoDao {
         }
     }
 
-
     public boolean delete(Aluno aluno) {
         EntityManager em = factory.createEntityManager();
+        boolean sucesso = false;
         try {
             em.getTransaction().begin();
             Aluno alunoToDelete = em.find(Aluno.class, aluno.getId());
             if (alunoToDelete != null) {
                 em.remove(alunoToDelete);
-                return true;
+                sucesso = true;
             }
             em.getTransaction().commit();
         } catch (Exception e) {
             e.printStackTrace();
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+        } finally {
+            em.close();
         }
-        em.close();
-        return false;
+        return sucesso;
     }
 }

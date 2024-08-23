@@ -12,8 +12,7 @@ import java.util.Scanner;
 public class Menu {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        EntityManagerFactory factory = Persistence.createEntityManagerFactory("banco");
-        AlunoDao dao = new AlunoDao(factory);
+        AlunoDao dao = new AlunoDao();
 
         while (true) {
             System.out.println("** CADASTRO DE ALUNOS **");
@@ -37,6 +36,13 @@ public class Menu {
                     String nome = scanner.nextLine();
                     System.out.println("Digite o RA: ");
                     String RA = scanner.nextLine();
+
+                    Aluno alunoExistente = dao.getByRa(RA).orElse(null);
+                    if (alunoExistente != null) {
+                        System.out.println("Erro: Já existe um aluno com o RA " + RA + ".");
+                        break;
+                    }
+
                     System.out.println("Digite o email: ");
                     String email = scanner.nextLine();
                     System.out.println("Digite a nota1: ");
@@ -49,6 +55,7 @@ public class Menu {
                     Aluno novoAluno = new Aluno(nome, RA, email, nota1, nota2, nota3);
 
                     boolean sucessoCadastro = dao.save(novoAluno);
+
                     System.out.println(sucessoCadastro ? "Aluno cadastrado com sucesso!" : "Erro ao cadastrar o aluno.");
                     break;
 
